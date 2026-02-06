@@ -9,12 +9,13 @@ class BinanceClientWrapper:
         self.client = Client(API_KEY, API_SECRET, testnet=True)
         logger.info("Binance Futures Testnet Client Initialized.")
 
-    def place_order(self, symbol, side, order_type, quantity, price=None):
+    def place_order(self, symbol, side, order_type, quantity, price=None, stop_price=None):
         """
         Places an order on Binance Futures Testnet.
+        Supports: MARKET, LIMIT, STOP_MARKET
         """
         try:
-            logger.info(f"Sending Order -> Symbol: {symbol}, Side: {side}, Type: {order_type}, Qty: {quantity}, Price: {price}")
+            logger.info(f"Sending Order -> Symbol: {symbol}, Side: {side}, Type: {order_type}, Qty: {quantity}, Price: {price}, StopPrice: {stop_price}")
             
             params = {
                 'symbol': symbol,
@@ -23,19 +24,24 @@ class BinanceClientWrapper:
                 'quantity': quantity,
             }
 
+            # Logic for different order types
             if order_type == 'LIMIT':
                 params['timeInForce'] = 'GTC'
                 params['price'] = price
+            
+            elif order_type == 'STOP_MARKET':
+                if not stop_price:
+                    raise ValueError("Stop Price is required for STOP_MARKET orders")
+                params['stopPrice'] = stop_price
+                params['closePosition'] = 'true'  # Common for simple stop-losses, or remove if opening new pos
 
             # API Request
             response = self.client.futures_create_order(**params)
             
-            # Log Success
             logger.info(f"Order Success! ID: {response.get('orderId')}, Status: {response.get('status')}")
             return response
 
-        except BinanceAPIException as e:  # <--- CHANGED THIS
-            # e.message contains the error details in python-binance
+        except BinanceAPIException as e:
             logger.error(f"Binance API Error: {e.message}")
             return {"error": e.message}
         except Exception as e:

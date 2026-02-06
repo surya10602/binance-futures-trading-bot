@@ -16,17 +16,18 @@ A simplified Python command-line application that places BUY/SELL orders on the 
 ## Setup
 
 1. **Clone/Download the repository**
-2. **Install dependencies:**
+2. **Create a new python environment (optional)**
+3. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
-3. **Configure Credentials: Create a .env file in the root directory:**
+4. **Configure Credentials: Create a .env file in the root directory:**
    ```bash
    BINANCE_TESTNET_API_KEY=your_api_key_here
    BINANCE_TESTNET_SECRET_KEY=your_secret_key_here
    ```
-4. **Usage**
-Run the bot using main.py with the required arguments.
+5. **Usage:**
+   Run the bot using main.py with the required arguments.
 
 ## Examples
 1. Place a Market Buy Order
